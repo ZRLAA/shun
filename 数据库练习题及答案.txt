@@ -1,0 +1,166 @@
+1.查询全体学生的学号与姓名
+SELECT Sname,Sno
+FROM Student;
+2.查询全体学生的姓名，学号和所在系
+SELECT Sname,Sno,Sdept 
+FROM Student;
+3.查询全体学生的所有信息（三张表以上的关联查询）
+SELECT *
+FROM Course AS a join SC AS b on a.cno = b.cno JOIN Student AS c ON b.sno = c.sno;
+4.查询全体学生的姓名及其年龄
+SELECT Sname,Sage 
+FROM Student;
+5.在选课表（SC）中查询有哪些学生选修了课程，并列出学生的学号(不重复）
+select  Sno 
+FROM SC 
+WHERE XKLB = ('选修') GROUP BY SNO;
+6.查询计算机系全体学生的姓名
+SELECT Sname
+FROM Student 
+WHERE sdept = '计算机系';
+7.查询所有年龄在20岁以下的学生的姓名及年龄
+SELECT Sname,Sage 
+FROM Student 
+WHERE Sage <20;
+8.查询考试成绩不及格的学生的姓名
+SELECT Sname
+FROM Student JOIN SC on SC.sno=Student.sno 
+WHERE Grade <60;
+9.查询年龄在20~23岁之间的学生的姓名，所在系和年龄
+SELECT Sname,Sdept,Sage 
+FROM Student 
+WHERE Sage BETWEEN 20 AND 23;
+SELECT Sname,Sdept,Sage
+FROM Student
+WHERE Sage not in(20,21,22,23);
+10.查询年龄不在20~23之间的学生的姓名，所在系和年龄
+SELECT Sname,Sdept,Sage FROM Student WHERE Sage NOT BETWEEN 20 AND 23;
+11.查询信息系，数学系和计算机系学生的姓名和性别
+SELECT Sname,Sex 
+FROM Student 
+WHERE Sdept in ('信息系','数学系','计算机系');
+SELECT Sname,Sex 
+FROM Student
+WHERE Sdept ='信息系'OR Sdept='计算机系'OR Sdept = '数学系';
+12.查询既不属于信息系，数学系，也不属于计算机系的学生的姓名和性别
+SELECT Sname,Sex FROM Student WHERE Sdept NOT in ('信息系','数学系','计算机系');
+13.查询学生表中姓“张”的学生的详细信息
+SELECT * 
+FROM Student 
+WHERE Sname LIKE '张%';
+14.查询学生表中姓“张”，姓“李”和姓“刘”的学生的情况
+SELECT * 
+FROM Student 
+WHERE Sname LIKE '张%' OR Sname LIKE '李%' OR Sname LIKE '刘%';
+15.查询所有不姓“刘”的学生的姓名
+SELECT Sname AS '姓名' 
+FROM Student
+WHERE Sname NOT LIKE '刘%';
+16.从学生表中查询学号的最后一位不是2，3，5的学生的情况
+SELECT * 
+FROM Student 
+WHERE SNO NOT LIKE '%2' AND SNO NOT LIKE '%3' AND SNO NOT LIKE '%5';
+17.查询无考试成绩的学生的学号和相应的课程号
+
+SELECT SNO,Cno 
+FROM SC 
+WHERE Grade is NULL;
+18.查询所有有考试成绩的学生的学号和课程号
+SELECT SNO,Cno FROM SC WHERE Grade IS NOT null;
+19.查询计算机系年龄在20岁以下的学生的姓名
+SELECT Sname 
+FROM Student 
+WHERE Sdept ='计算机系' AND Sage <20;
+20.将学生按年龄升序排序
+SELECT Sage FROM Student  ORDER BY Sage ASC;
+21.查询选修了课程“c02”的学生的学号及其成绩，查询结果按成绩降序排列
+SELECT Sno,Grade
+FROM SC
+WHERE Cno ='c02'AND XKLB = '选修' ORDER BY Grade DESC;
+22.查询全体学生的信息，
+查询结果按所在系的系名升序排列，
+同一系的学生按年龄降序排列
+SELECT *
+FROM Student
+ORDER BY Sdept ASC, Sage DESC;
+
+23.统计学生总人数
+SELECT COUNT('SNO') 
+FROM Student;
+24.计算学号为9512101的学生的考试总成绩之和
+SELECT SUM(Grade)
+FROM SC WHERE Sno =9512101;
+25.计算课程“c01”的学生的考试平均成绩
+SELECT avg(Grade)
+FROM SC
+WHERE Cno = 'c01';
+26.查询选修了课程“c01”的学生的最高分和最低分
+SELECT MAX(Grade),MIN(Grade)
+FROM SC
+WHERE Cno = 'c01'AND XKLB ='选修';
+27.统计每门课程的选课人数，列出课程号和人数
+SELECT Cno,COUNT('人数') as '人数'
+FROM SC GROUP BY Cno;
+28.查询每名学生的选课门数和平均成绩
+SELECT COUNT(CNO),avg(Grade)
+FROM SC GROUP BY Sno;
+
+29.查询选修了3门以上课程的学生的学号
+SELECT Sno
+FROM SC
+GROUP BY Sno
+HAVING COUNT(Cno) >3;
+
+30.查询选课门数等于或大于4门的学生的平均成绩和选课门数
+SELECT Avg(Grade),count(Cno)
+FROM SC
+GROUP BY Sno
+HAVING count(Cno) >=4;
+31.查询每个学生的情况及其选课的情况
+SELECT * FROM Student LEFT  JOIN  SC ON Student.Sno = SC.Sno;
+32.查询计算机系学生的选课情况，
+要求列出学生的名字，所修课的课程号和成绩
+SELECT Student.Sname,SC.CNO,SC.Grade,SC.XKLB
+FROM Student JOIN SC ON Student.Sno =SC.Sno
+WHERE Student.Sdept = '计算机系';
+33.查询信息系选修VB课程的学生的成绩，要求列出学生姓名，课程名和成绩
+SELECT Student.Sname,Course.Cname,SC.Grade
+FROM Student  JOIN SC  ON Student.Sno = SC.Sno JOIN Course ON SC.Cno =Course.Cno
+WHERE Course.Cname ='VB' AND Student.Sdept ='信息系';
+
+34.查询所有选修了VB课程的学生的情况，要求列出学生姓名和所在的系
+SELECT a.Sname,a.sdept
+FROM Student AS a JOIN SC AS b ON a.Sno = b.Sno JOIN Course AS c ON b.Cno =c.Cno
+WHERE c.Cname ='VB' AND XKLB ='选修';
+35.查询与刘晨在同一个系
+学习的学生的姓名和所在系
+SELECT Sname,sdept
+FROM Student
+WHERE sdept =(SELECT sdept FROM Student WHERE Sname ='刘晨');
+36.查询学生的选课情况，包括选修课程的学生和没有修课的学生
+SELECT * FROM Student LEFT JOIN SC ON Student.Sno = SC.Sno;
+37.查询数学系成绩在80分以上的学生的学号，姓名
+SELECT Student.Sno,Student.Sname
+FROM Student JOIN SC ON Student.Sno = SC.Sno
+WHERE Student.Sdept = '数学系' AND SC.Grade >80;
+38.查询计算机系考试成绩最高的学生的姓名
+方法一：
+SELECT Sname FROM Student WHERE Sno = (SELECT Sno FROM SC WHERE Grade = (SELECT MAX(Grade) FROM Student JOIN SC ON Student.Sno = SC.Sno WHERE Sdept='计算机系')) ;
+方法二：
+select Student.Sname
+FROM Student JOIN SC ON SC.SNO = Student.SNO
+WHERE SC.Grade =(SELECT MAX(Grade) FROM SC JOIN Student ON SC.SNO = Student.SNO WHERE Student.Sdept ='计算机系')
+39.查询成绩大于90分的学生的学号和姓名
+多表联查：
+SELECT Student.SNO,Student.Sname
+FROM Student JOIN SC ON Student.Sno = SC.Sno
+WHERE Grade>90
+嵌套：
+SELECT Sno,Sname FROM Student WHERE Sno in (SELECT Sno FROM SC WHERE  Grade>90)
+40.查询选修了课程“c01”的学生姓名
+多表联查：
+SELECT Student.SNO,Student.Sname
+FROM Student JOIN SC ON Student.Sno = SC.Sno
+WHERE  Cno = 'c01' AND XKLB ='选修';
+嵌套：
+SELECT Sname FROM Student WHERE Sno in (SELECT Sno FROM SC WHERE Cno = 'c01' AND XKLB ='选修');
